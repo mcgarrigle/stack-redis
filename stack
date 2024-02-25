@@ -1,0 +1,34 @@
+#!/bin/bash
+
+function net_exists {
+  docker network inspect "$1" > /dev/null
+  return $?
+}
+
+function command_down {
+  docker stack rm "${STACK}"
+  sleep 10
+  while net_exists "${STACK}_lan"; do
+    :
+  done
+  docker volume rm "${STACK}_data"
+}
+
+function command_up {
+  docker stack deploy -c redis.stack.yml "${STACK}"
+}
+
+function command_reset {
+  command_down
+  command_up
+}
+
+function command_help {
+  echo "HELP"
+}
+
+export STACK="redis"
+
+CMD="command_${1:-help}"
+shift
+$CMD $@

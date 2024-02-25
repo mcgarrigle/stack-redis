@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+
+  redis:
+    image: redis:latest
+    volumes:
+      - "data:/data"
+    ports:
+      - "6379:6379"
+    networks:
+      - lan
+
+  commander:
+    image: ghcr.io/joeferner/redis-commander:latest
+    restart: always
+    environment:
+    - REDIS_HOSTS=local:redis:6379
+    ports:
+    - "8081:8081"
+    networks:
+      - lan
+
+volumes:
+  data:
+
+networks:
+  lan:
