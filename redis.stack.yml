@@ -10,16 +10,23 @@ services:
       - "6379:6379"
     networks:
       - lan
+    labels:
+      wales.mac.lab.version: ${VERSION}
+      wales.mac.lab.stack: stack.redis.1.1.1
+      wales.mac.lab.deployment: stack.redis.production.1.1.2
 
   commander:
     image: ghcr.io/joeferner/redis-commander:latest
-    restart: always
     environment:
     - REDIS_HOSTS=local:redis:6379
     ports:
     - "8081:8081"
     networks:
       - lan
+    labels:
+      wales.mac.lab.version: ${VERSION}
+      wales.mac.lab.stack: stack.redis.1.1.1
+      wales.mac.lab.deployment: stack.redis.production.1.1.2
 
 volumes:
   data:

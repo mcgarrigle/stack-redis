@@ -1,5 +1,19 @@
 #!/bin/bash
 
+function git_head {
+  commit_hash=$(git rev-parse --short HEAD)
+  tag_name=$(git describe --exact-match --tags $commit_hash 2>/dev/null)
+  if [ -z "$tag_name" ]; then
+    echo $commit_hash
+  else
+    echo $tag_name
+  fi
+}
+
+function remove_volumes {
+  docker volume rm $(docker volume ls -q --filter name="${1}_")
+}
+
 function net_exists {
   docker network inspect "$1" > /dev/null
   return $?
@@ -11,11 +25,11 @@ function command_down {
   while net_exists "${STACK}_lan"; do
     :
   done
-  docker volume rm "${STACK}_data"
+  remove_volumes ${STACK}
 }
 
 function command_up {
-  docker stack deploy -c redis.stack.yml "${STACK}"
+  docker stack deploy --detach=true -c "${COMPOSE}" "${STACK}"
 }
 
 function command_reset {
@@ -27,7 +41,10 @@ function command_help {
   echo "HELP"
 }
 
-export STACK="redis"
+export COMPOSE=(*.stack.yml)
+export STACK="${COMPOSE/%.stack.yml}"
+export VERSION=$(git_head)
+echo "managing $STACK $VERSION"
 
 CMD="command_${1:-help}"
 shift
