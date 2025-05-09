@@ -1,8 +1,18 @@
 #!/bin/bash
 
+function git_remote {
+  remote=$(git remote get-url --push origin 2>>/dev/null )
+  ok=$?
+  if [[ $ok == 0 ]]; then
+    echo $remote
+  else
+    echo none
+  fi
+}
+
 function git_head {
-  commit_hash=$(git rev-parse --short HEAD)
-  tag_name=$(git describe --exact-match --tags $commit_hash 2>/dev/null)
+  local commit_hash=$(git rev-parse --short HEAD)
+  local tag_name=$(git describe --exact-match --tags $commit_hash 2>/dev/null)
   if [ -z "$tag_name" ]; then
     echo $commit_hash
   else
@@ -43,8 +53,9 @@ function command_help {
 
 export COMPOSE=(*.stack.yml)
 export STACK="${COMPOSE/%.stack.yml}"
+export REMOTE=$(git_remote)
 export VERSION=$(git_head)
-echo "managing $STACK $VERSION"
+echo "managing $STACK $REMOTE $VERSION"
 
 CMD="command_${1:-help}"
 shift

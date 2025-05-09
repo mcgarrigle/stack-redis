@@ -11,9 +11,7 @@ services:
     networks:
       - lan
     labels:
-      wales.mac.lab.version: ${VERSION}
-      wales.mac.lab.stack: stack.redis.1.1.1
-      wales.mac.lab.deployment: stack.redis.production.1.1.2
+      wales.mac.lab.stack: "${REMOTE} [${VERSION}]"
 
   commander:
     image: ghcr.io/joeferner/redis-commander:latest
@@ -24,9 +22,7 @@ services:
     networks:
       - lan
     labels:
-      wales.mac.lab.version: ${VERSION}
-      wales.mac.lab.stack: stack.redis.1.1.1
-      wales.mac.lab.deployment: stack.redis.production.1.1.2
+      wales.mac.lab.stack: "${REMOTE} [${VERSION}]"
 
 volumes:
   data:
